@@ -47,18 +47,18 @@ l7 = tk.Label(frame2, text="Dividendes (yield ex. 0.07)) :")
 l7.grid(row=5, column=0, pady="5")
 
 #Entrée des différents paramètres de la formule BS
-vol = tk.Entry(frame2)
-vol.grid(row=0, column=1)
-s0 = tk.Entry(frame2)
-s0.grid(row=1, column=1)
-r = tk.Entry(frame2)
-r.grid(row=2, column=1)
-k = tk.Entry(frame2)
-k.grid(row=3, column=1)
-t = tk.Entry(frame2)
-t.grid(row=4, column=1)
-div = tk.Entry(frame2)
-div.grid(row=5, column=1)
+vol_entr = tk.Entry(frame2)
+vol_entr.grid(row=0, column=1)
+s0_entr = tk.Entry(frame2)
+s0_entr.grid(row=1, column=1)
+r_entr = tk.Entry(frame2)
+r_entr.grid(row=2, column=1)
+k_entr = tk.Entry(frame2)
+k_entr.grid(row=3, column=1)
+t_entr = tk.Entry(frame2)
+t_entr.grid(row=4, column=1)
+div_entr = tk.Entry(frame2)
+div_entr.grid(row=5, column=1)
 
 frame2.pack(expand="YES", pady="40")
 
@@ -67,39 +67,39 @@ frame2.pack(expand="YES", pady="40")
 def calc():
     global choix
     try:
-        vol2 = float(vol.get())
-        s02 = float(s0.get())
-        r2 = float(r.get())
-        k2 = float(k.get())
-        t2 = float(t.get())
-        div2 = float(div.get())
+        vol = float(vol_entr.get())
+        s0 = float(s0_entr.get())
+        r = float(r_entr.get())
+        k = float(k_entr.get())
+        t = float(t_entr.get())
+        div = float(div_entr.get())
 
-        d1 = (np.log(s02/k2)+(r2+vol2**2/2)*t2)/(vol2*np.sqrt(t2))
-        d2 = d1 - vol2*np.sqrt(t2)
+        d1 = (np.log(s0/k)+(r+(vol**2)/2)*t)/(vol*np.sqrt(t))
+        d2 = d1 - vol*np.sqrt(t)
 
         if choix == 0:
-            prix = s02*np.exp(-div2*t2)*norm.cdf(d1, 0, 1) - k2*np.exp(-r2*t2)*norm.cdf(d2, 0, 1)
+            prix = s0*np.exp(-div*t)*norm.cdf(d1, 0, 1) - k*np.exp(-r*t)*norm.cdf(d2, 0, 1)
             resultat["text"] = f"{round(prix, 3)} €"
             resultat["fg"] = "black"
-            delta_val["text"] = round(delta("c", s02, k2, t2, r2, vol2, div2), 4)
-            gamma_val["text"] = round(gamma("c", s02, k2, t2, r2, vol2, div2), 4)
-            vega_val["text"] = round(vega("c", s02, k2, t2, r2, vol2, div2), 4)
-            theta_val["text"] = round(theta("c", s02, k2, t2, r2, vol2, div2), 4)
-            rho_val["text"] = round(rho("c", s02, k2, t2, r2, vol2, div2), 4)
+            delta_val["text"] = round(delta("c", s0, k, t, r, vol, div), 4)
+            gamma_val["text"] = round(gamma("c", s0, k, t, r, vol, div), 4)
+            vega_val["text"] = round(vega("c", s0, k, t, r, vol, div), 4)
+            theta_val["text"] = round(theta("c", s0, k, t, r, vol, div), 4)
+            rho_val["text"] = round(rho("c", s0, k, t, r, vol, div), 4)
             delta_val["fg"] = "black"
             gamma_val["fg"] = "black"
             vega_val["fg"] = "black"
             theta_val["fg"] = "black"
             rho_val["fg"] = "black"
         elif choix == 1:
-            prix = k2*np.exp(-r2*t2)*norm.cdf(-d2, 0, 1) - s02*np.exp(-div2*t2)*norm.cdf(-d1, 0, 1)
+            prix = k*np.exp(-r*t)*norm.cdf(-d2, 0, 1) - s0*np.exp(-div*t)*norm.cdf(-d1, 0, 1)
             resultat["text"] = f"{round(prix, 3)} €"
             resultat["fg"] = "black"
-            delta_val["text"] = round(delta("p", s02, k2, t2, r2, vol2, div2), 4)
-            gamma_val["text"] = round(gamma("p", s02, k2, t2, r2, vol2, div2), 4)
-            vega_val["text"] = round(vega("p", s02, k2, t2, r2, vol2, div2), 4)
-            theta_val["text"] = round(theta("p", s02, k2, t2, r2, vol2, div2), 4)
-            rho_val["text"] = round(rho("p", s02, k2, t2, r2, vol2, div2), 4)
+            delta_val["text"] = round(delta("p", s0, k, t, r, vol, div), 4)
+            gamma_val["text"] = round(gamma("p", s0, k, t, r, vol, div), 4)
+            vega_val["text"] = round(vega("p", s0, k, t, r, vol, div), 4)
+            theta_val["text"] = round(theta("p", s0, k, t, r, vol, div), 4)
+            rho_val["text"] = round(rho("p", s0, k, t, r, vol, div), 4)
             delta_val["fg"] = "black"
             gamma_val["fg"] = "black"
             vega_val["fg"] = "black"
@@ -153,23 +153,23 @@ def launch_cd():
     try:
         fig, axe = plt.subplots()
         fig.suptitle("Delta")
-        vol2 = float(vol.get())
-        s02 = float(s0.get())
-        r2 = float(r.get())
-        k2 = float(k.get())
-        t2 = float(t.get())
-        div2 = float(div.get())
-        spotprices = np.linspace(0.01*k2, 5*k2, 1000)
-        axe.axvline(x=k2, color="red", linestyle="--", label="Strike")
-        axe.set_xlim([0.01*k2, 2*k2])
+        vol = float(vol_entr.get())
+        s0 = float(s0_entr.get())
+        r = float(r_entr.get())
+        k = float(k_entr.get())
+        t = float(t_entr.get())
+        div = float(div_entr.get())
+        spotprices = np.linspace(0.01*k, 5*k, 1000)
+        axe.axvline(x=k, color="red", linestyle="--", label="Strike")
+        axe.set_xlim([0.01*k, 2*k])
         y =[]
         if choix == 0:
             for x in spotprices:
-                y.append(delta("c", x, k2, t2, r2, vol2, div2))
+                y.append(delta("c", x, k, t, r, vol, div))
             axe.plot(spotprices, y, label="Delta du Call")
         elif choix == 1:
             for x in spotprices:
-                y.append(delta("p", x, k2, t2, r2, vol2, div2))
+                y.append(delta("p", x, k, t, r, vol, div))
             axe.plot(spotprices, y, label="Delta du Put")    
         axe.legend()    
         axe.set_xlabel("Spot price")
@@ -184,23 +184,23 @@ def launch_cg():
     try:
         fig, axe = plt.subplots()
         fig.suptitle("Gamma")
-        vol2 = float(vol.get())
-        s02 = float(s0.get())
-        r2 = float(r.get())
-        k2 = float(k.get())
-        t2 = float(t.get())
-        div2 = float(div.get())
-        spotprices = np.linspace(0.01*k2, 5*k2, 1000)
-        axe.axvline(x=k2, color="red", linestyle="--", label="Strike")
-        axe.set_xlim([0.01*k2, 2*k2])
+        vol = float(vol_entr.get())
+        s0 = float(s0_entr.get())
+        r = float(r_entr.get())
+        k = float(k_entr.get())
+        t = float(t_entr.get())
+        div = float(div_entr.get())
+        spotprices = np.linspace(0.01*k, 5*k, 1000)
+        axe.axvline(x=k, color="red", linestyle="--", label="Strike")
+        axe.set_xlim([0.01*k, 2*k])
         y =[]
         if choix == 0:
             for x in spotprices:
-                y.append(gamma("c", x, k2, t2, r2, vol2, div2))
+                y.append(gamma("c", x, k, t, r, vol, div))
             axe.plot(spotprices, y, label="Gamma du Call")
         elif choix == 1:
             for x in spotprices:
-                y.append(gamma("p", x, k2, t2, r2, vol2, div2))
+                y.append(gamma("p", x, k, t, r, vol, div))
             axe.plot(spotprices, y, label="Gamma du Put")    
         axe.legend()    
         axe.set_xlabel("Spot price")
@@ -214,23 +214,23 @@ def launch_cv():
     try:
         fig, axe = plt.subplots()
         fig.suptitle("Vega")
-        vol2 = float(vol.get())
-        s02 = float(s0.get())
-        r2 = float(r.get())
-        k2 = float(k.get())
-        t2 = float(t.get())
-        div2 = float(div.get())
-        spotprices = np.linspace(0.01*k2, 5*k2, 1000)
-        axe.axvline(x=k2, color="red", linestyle="--", label="Strike")
-        axe.set_xlim([0.01*k2, 2*k2])
+        vol = float(vol_entr.get())
+        s0 = float(s0_entr.get())
+        r = float(r_entr.get())
+        k = float(k_entr.get())
+        t = float(t_entr.get())
+        div = float(div_entr.get())
+        spotprices = np.linspace(0.01*k, 5*k, 1000)
+        axe.axvline(x=k, color="red", linestyle="--", label="Strike")
+        axe.set_xlim([0.01*k, 2*k])
         y =[]
         if choix == 0:
             for x in spotprices:
-                y.append(vega("c", x, k2, t2, r2, vol2, div2))
+                y.append(vega("c", x, k, t, r, vol, div))
             axe.plot(spotprices, y, label="Vega du Call")
         elif choix == 1:
             for x in spotprices:
-                y.append(vega("p", x, k2, t2, r2, vol2, div2))
+                y.append(vega("p", x, k, t, r, vol, div))
             axe.plot(spotprices, y, label="Vega du Put")    
         axe.legend()    
         axe.set_xlabel("Spot price")
@@ -244,24 +244,24 @@ def launch_ct():
     try:
         fig, axe = plt.subplots()
         fig.suptitle("Theta")
-        vol2 = float(vol.get())
-        s02 = float(s0.get())
-        r2 = float(r.get())
-        k2 = float(k.get())
-        t2 = float(t.get())
-        div2 = float(div.get())
-        spotprices = np.linspace(0.01*k2, 5*k2, 1000)
-        axe.axvline(x=k2, color="red", linestyle="--", label="Strike")
-        axe.set_xlim([0.01*k2, 2*k2])
+        vol = float(vol_entr.get())
+        s0 = float(s0_entr.get())
+        r = float(r_entr.get())
+        k = float(k_entr.get())
+        t = float(t_entr.get())
+        div = float(div_entr.get())
+        spotprices = np.linspace(0.01*k, 5*k, 1000)
+        axe.axvline(x=k, color="red", linestyle="--", label="Strike")
+        axe.set_xlim([0.01*k, 2*k])
         y =[]
         if choix == 0:
             for x in spotprices:
-                y.append(theta("c", x, k2, t2, r2, vol2, div2))
+                y.append(theta("c", x, k, t, r, vol, div))
             axe.plot(spotprices, y, label="Theta du Call")
         elif choix == 1:
             for x in spotprices:
-                y.append(theta("p", x, k2, t2, r2, vol2, div2))
-            axe.plot(spotprices, y, label="Theta du Put")    
+                y.append(theta("p", x, k, t, r, vol, div))
+            axe.plot(spotprices, y, label="Theta du Put")     
         axe.legend()    
         axe.set_xlabel("Spot price")
         plt.show()
@@ -274,24 +274,24 @@ def launch_cr():
     try:
         fig, axe = plt.subplots()
         fig.suptitle("Rho")
-        vol2 = float(vol.get())
-        s02 = float(s0.get())
-        r2 = float(r.get())
-        k2 = float(k.get())
-        t2 = float(t.get())
-        div2 = float(div.get())
-        spotprices = np.linspace(0.01*k2, 5*k2, 1000)
-        axe.axvline(x=k2, color="red", linestyle="--", label="Strike")
-        axe.set_xlim([0.01*k2, 2*k2])
+        vol = float(vol_entr.get())
+        s0 = float(s0_entr.get())
+        r = float(r_entr.get())
+        k = float(k_entr.get())
+        t = float(t_entr.get())
+        div = float(div_entr.get())
+        spotprices = np.linspace(0.01*k, 5*k, 1000)
+        axe.axvline(x=k, color="red", linestyle="--", label="Strike")
+        axe.set_xlim([0.01*k, 2*k])
         y =[]
         if choix == 0:
             for x in spotprices:
-                y.append(rho("c", x, k2, t2, r2, vol2, div2))
+                y.append(rho("c", x, k, t, r, vol, div))
             axe.plot(spotprices, y, label="Rho du Call")
         elif choix == 1:
             for x in spotprices:
-                y.append(rho("p", x, k2, t2, r2, vol2, div2))
-            axe.plot(spotprices, y, label="Rho du Put")    
+                y.append(rho("p", x, k, t, r, vol, div))
+            axe.plot(spotprices, y, label="Rho du Put")      
         axe.legend()    
         axe.set_xlabel("Spot price")
         plt.show()
