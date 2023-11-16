@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import math as m
 from scipy.stats import norm
 import tkinter as tk
 from py_vollib.black_scholes_merton.greeks.analytical import gamma, delta, vega, theta, rho
@@ -75,11 +74,11 @@ def calc():
         t2 = float(t.get())
         div2 = float(div.get())
 
-        d1 = (m.log(s02/k2)+(r2+vol2**2/2)*t2)/(vol2*m.sqrt(t2))
-        d2 = d1 - vol2*m.sqrt(t2)
+        d1 = (np.log(s02/k2)+(r2+vol2**2/2)*t2)/(vol2*np.sqrt(t2))
+        d2 = d1 - vol2*np.sqrt(t2)
 
         if choix == 0:
-            prix = s02*m.exp(-div2*t2)*norm.cdf(d1, 0, 1) - k2*m.exp(-r2*t2)*norm.cdf(d2, 0, 1)
+            prix = s02*np.exp(-div2*t2)*norm.cdf(d1, 0, 1) - k2*np.exp(-r2*t2)*norm.cdf(d2, 0, 1)
             resultat["text"] = f"{round(prix, 3)} €"
             resultat["fg"] = "black"
             delta_val["text"] = round(delta("c", s02, k2, t2, r2, vol2, div2), 4)
@@ -93,7 +92,7 @@ def calc():
             theta_val["fg"] = "black"
             rho_val["fg"] = "black"
         elif choix == 1:
-            prix = k2*m.exp(-r2*t2)*norm.cdf(-d2, 0, 1) - s02*m.exp(-div2*t2)*norm.cdf(-d1, 0, 1)
+            prix = k2*np.exp(-r2*t2)*norm.cdf(-d2, 0, 1) - s02*np.exp(-div2*t2)*norm.cdf(-d1, 0, 1)
             resultat["text"] = f"{round(prix, 3)} €"
             resultat["fg"] = "black"
             delta_val["text"] = round(delta("p", s02, k2, t2, r2, vol2, div2), 4)
